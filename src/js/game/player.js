@@ -23,6 +23,14 @@ Player2.prototype.render = function(context){
     this.paddle.render(context);
 }
 
+Player1.prototype.changeSpeed = function(speed){
+    this.speed = speed;
+}
+
+Player2.prototype.changeSpeed = function(speed){
+    this.speed = speed;
+}
+
 Player1.prototype.update = function(ball){
     if(this.play_mode == 1){
         this.user_update();

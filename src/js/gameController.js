@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import Sequential_AI from "./models/model"
 import {Player1,Player2} from "./game/player"
 import Ball from "./game/ball"
@@ -11,7 +12,8 @@ window.mozRequestAnimationFrame ||
 function(callback) { window.setTimeout(callback,1000/60)}
 
 // create canvas and attach it to the screen when loaded
-var canvas = document.createElement('canvas');
+// var canvas = document.createElement('canvas');
+var canvas = document.getElementById("myCanvas");
 
 function Controller(game_speed){
     // add UI items
@@ -66,6 +68,24 @@ Controller.prototype.startAI = function(){
     this.player1.play_mode = 1;
 }
 
+Controller.prototype.changePlayerMode = function(player_NO,mode){
+    if(player_NO == 1){
+        this.player1.play_mode = mode;
+    }
+    else if(player_NO == 2){
+        this.player2.play_mode = mode;
+    }
+    else{
+        console.log("unknown player no");
+    }
+}
+
+Controller.prototype.changeGameSpeed = function(speed){
+    this.player1.changeSpeed(speed);
+    this.player2.changeSpeed(speed);
+    this.ball.changeSpeed(speed);
+}
+
 var controller = new Controller(2);
 
 var step = function(){
@@ -81,5 +101,9 @@ var startGame = function(){
     animate(step);
 }
 
-export {startGame, controller}
+var PauseGame = function(){
+    controller.pause = true;
+}
+
+export {startGame, controller,PauseGame}
 

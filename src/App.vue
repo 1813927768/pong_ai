@@ -1,17 +1,17 @@
 <template>
   <div id="app">
-    <!-- <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/> -->
+    <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
+    <ControlLayout/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import ControlLayout from './components/ControlSetting.vue'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    ControlLayout
   },
 }
 </script>
@@ -23,6 +23,12 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+#app {
+  position: relative;
+  top: 0;
+  left: 500px;
+  width: 500px;
 }
 </style>

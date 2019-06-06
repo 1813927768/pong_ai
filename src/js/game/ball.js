@@ -6,10 +6,11 @@ import {controller} from "../gameController"
 export default function Ball(x,y,game_speed){
     this.x = x;
     this.y = y;
-    this.x_speed = 0;
-    this.y_speed = 3*game_speed;
-    this.radius = 5;
     this.speed = game_speed;
+
+    this.x_speed = 0;
+    this.y_speed = 3*this.speed;
+    this.radius = 5;
 }
     
 Ball.prototype.render = function(context) {
@@ -17,6 +18,10 @@ Ball.prototype.render = function(context) {
     context.arc(this.x,this.y,this.radius,2*Math.PI,false);
     context.fillStyle = "#000000";
     context.fill();
+}
+
+Ball.prototype.changeSpeed = function(speed){
+    this.speed = speed;
 }
 
 

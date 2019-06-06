@@ -103,9 +103,9 @@ Sequential_AI.prototype.train = function(){
         console.log('nothing to train');
         return;
     }
-    data_xs = [];
-    data_ys = [];
-    for(i = 0; i < 3; i++){
+    var data_xs = [];
+    var data_ys = [];
+    for(var i = 0; i < 3; i++){
         data_xs.push(...this.training_data[i].slice(0, len));
         data_ys.push(...Array(len).fill([i==0?1:0, i==1?1:0, i==2?1:0]));
     }
