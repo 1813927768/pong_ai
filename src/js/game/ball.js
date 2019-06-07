@@ -2,10 +2,11 @@ const width = 400;
 const height = 600;
 
 import {controller} from "../gameController"
+import {getRandomNum} from "../util/random"
 
-export default function Ball(x,y,game_speed){
-    this.x = x;
-    this.y = y;
+export default function Ball(game_speed){
+    this.x = getRandomNum(5,width-5);
+    this.y = getRandomNum(50,height-50);
     this.speed = game_speed;
 
     this.x_speed = 0;
@@ -52,8 +53,8 @@ Ball.prototype.update = function(paddle1,paddle2) {
         this.x_speed = 0;
         this.y_speed = 3*this.speed;
         // reset the ball location
-        this.x = 200;
-        this.y = 300;
+        this.x = getRandomNum(5,width-5);
+        this.y = getRandomNum(50,height-50);
         controller.reset();
     }
 

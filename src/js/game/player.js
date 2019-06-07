@@ -2,14 +2,16 @@ import Paddle from "./paddle"
 import {getRandomNum} from "../util/random"
 
 function Player1(game_speed){
+    // 随机初始位置
     var x_ini = getRandomNum(0,350)
-    this.paddle = new Paddle(175,580,50,10);
+    this.paddle = new Paddle(x_ini,580,50,10);
     this.play_mode = 2;
     this.speed = game_speed;
 }
 
 function Player2(ai,game_speed){
-    this.paddle = new Paddle(175,10,50,10);
+    var x_ini = getRandomNum(0,350);
+    this.paddle = new Paddle(x_ini,10,50,10);
     this.play_mode = 2;
     this.ai = ai;
     this.speed = game_speed;

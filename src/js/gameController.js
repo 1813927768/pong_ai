@@ -25,7 +25,7 @@ function Controller(game_speed){
     this.ai = new Sequential_AI();
     this.player1 = new Player1(game_speed);
     this.player2 = new Player2(this.ai,game_speed);
-    this.ball = new Ball(200,300,game_speed);
+    this.ball = new Ball(game_speed);
 
     //add control setting
 
@@ -65,7 +65,7 @@ Controller.prototype.reset =  function(){
 // training finish, ai start playing
 Controller.prototype.startAI = function(){
     this.player2.play_mode = 3;
-    this.player1.play_mode = 1;
+    this.player1.play_mode = 2;
 }
 
 Controller.prototype.changePlayerMode = function(player_NO,mode){
@@ -97,7 +97,7 @@ var step = function(){
 }
 
 var startGame = function(){
-    document.body.appendChild(canvas);
+    // document.body.appendChild(canvas);
     animate(step);
 }
 
@@ -105,5 +105,10 @@ var PauseGame = function(){
     controller.pause = true;
 }
 
-export {startGame, controller,PauseGame}
+var ContinueGame = function(){
+    controller.pause = false;
+    animate(step);
+}
+
+export {startGame, controller,PauseGame, ContinueGame}
 

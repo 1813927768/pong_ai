@@ -36,9 +36,10 @@ export default function Sequential_AI(){
     this.training_data = [[],[],[]];
     this.last_data_object = null;
     this.current_turn = 0;      
-    this.turn = 2;      // number of games to learn for ai
+    this.turn = 10;      // number of games to learn for ai
     this.grab_data = true;
     this.flip_table = true;
+    this.learning = true;
 }
 
 Sequential_AI.prototype.save_data = function(player,computer,ball){
@@ -75,13 +76,14 @@ Sequential_AI.prototype.save_data = function(player,computer,ball){
 Sequential_AI.prototype.new_turn = function(){
     this.previous_data = null;
     this.current_turn++;
-    console.log('new turn: ' + this.turn);
+    console.log('new turn: ' + this.current_turn);
 
     //how many games til train?
-    if(this.current_turn > this.turn){
+    if(this.learning && this.current_turn > this.turn){
         this.train();
         controller.startAI();
         this.reset();
+        this.learning = false;
     }
 }
 
@@ -125,13 +127,11 @@ Sequential_AI.prototype.train = function(){
 }
 
 Sequential_AI.prototype.predict_move = function(){
-    console.log('predicting');
     if(this.last_data_object != null){
         //use this.last_data_object for input data
         //do prediction here
         //return -1/0/1
         var prediction = model.predict(tf.tensor([this.last_data_object]));
-        console.log(prediction)
         return tf.argMax(prediction, 1).dataSync()-1;
     }
 }

@@ -1,3 +1,5 @@
+import { getRandomNum } from "../util/random";
+
 export default function Paddle(x,y,width,height){
     this.x = x;
     this.y = y;
@@ -5,6 +7,8 @@ export default function Paddle(x,y,width,height){
     this.height = height;
     this.x_speed = 0;
     this.y_speed = 0;
+    // 加入惯性
+    this.pre_x_speed = 0;
 }
 
 Paddle.prototype.render = function(context){
@@ -27,4 +31,11 @@ Paddle.prototype.move = function(x,y){
         this.x = 400 - this.width;
         this.x_speed = 0;
     }
+
+    // 加入一定失误几率
+    this.x_speed -= getRandomNum(0,0.3)*(x+5);
+
+    // 加入惯性
+    this.x_speed += this.pre_x_speed / 3;
+    this.pre_x_speed = this.x_speed;
 }

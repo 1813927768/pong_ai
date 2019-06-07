@@ -1,35 +1,42 @@
 <template>
     <div class="container">
-        <Card class="card-container">
-            <p slot="title">player control setting</p>
-            <div class="control-container">
-                <div>
-                    <span> player1 :</span>
-                    <Select v-model="player1" class="player-select"  @on-change="changePlayer1">
-                        <Option v-for="item in modeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
+            <Card class="card-container">
+                <p slot="title">player control setting</p>
+                <div class="control-container">
+                    <div>
+                        <span> player1 :</span>
+                        <Select v-model="player1" class="player-select"  @on-change="changePlayer1">
+                            <Option v-for="item in modeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </div>
+                    <div>
+                        <span> player2 :</span>
+                        <Select v-model="player2" class="player-select" @on-change="changePlayer2">
+                            <Option v-for="item in modeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                        </Select>
+                    </div>
                 </div>
-                <div>
-                    <span> player2 :</span>
-                    <Select v-model="player2" class="player-select" @on-change="changePlayer2">
-                        <Option v-for="item in modeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
-                    </Select>
+            </Card>
+            
+            <Card class="card-container">
+                <p slot="title">game speed</p>
+                <div class="speed-setting">
+                    <Slider v-model="speed" show-input :max='10' :min='1' @on-change="changeSpeed" @on-input="changeSpeed"></Slider>
                 </div>
-            </div>
-        </Card>
-        
-        <Card class="card-container">
-            <p slot="title">game speed</p>
-            <div class="speed-setting">
-                <Slider v-model="speed" show-input :max='10' :min='1' @on-change="changeSpeed" @on-input="changeSpeed"></Slider>
-            </div>
-        </Card>
+            </Card>
+            <Card class="card-container">
+                游戏开关：
+                <i-switch v-model="isOpen" size="large" @on-change="changeGameState">
+                    <span slot="open">开启</span>
+                    <span slot="close">关闭</span>
+                </i-switch>
+            </Card>
     </div>
     
 </template>
 
 <script>
-import {controller} from "../js/gameController"
+import {controller,PauseGame,ContinueGame} from "../js/gameController"
 
 export default {
     data () {
@@ -50,6 +57,7 @@ export default {
             ],
             player1: null,
             player2: null,
+            isOpen: true,
             speed: 1,
         }
     },
@@ -62,6 +70,14 @@ export default {
         },
         changeSpeed(e){
             controller.changeGameSpeed(e)
+        },
+        changeGameState(){
+            if(this.isOpen){
+                ContinueGame();
+            }
+            else{
+                PauseGame();
+            }
         }
     }
 }
