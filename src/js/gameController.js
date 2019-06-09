@@ -43,7 +43,7 @@ function Controller(game_speed){
 
 // render all objects
 Controller.prototype.render = function(){
-    this.context.fillStyle = "#FF00FF";
+    this.context.fillStyle = "#cdffd8";
     this.context.fillRect(0,0,this.width,this.height);
     this.player1.render(this.context);
     this.player2.render(this.context);
@@ -61,6 +61,20 @@ Controller.prototype.update = function(){
 Controller.prototype.reset =  function(){
     this.ai.new_turn();
 }
+
+Controller.prototype.currentTurn = function(){
+    return this.ai.current_turn;
+}
+
+Controller.prototype.changeGamesLearn = function(gamesToLearn){
+    this.ai.turn = gamesToLearn;
+    console.log(gamesToLearn)
+}
+
+Controller.prototype.changeUseDB = function(e){
+    this.ai.useDB = e;
+}
+
 
 // training finish, ai start playing
 Controller.prototype.startAI = function(){
@@ -86,7 +100,7 @@ Controller.prototype.changeGameSpeed = function(speed){
     this.ball.changeSpeed(speed);
 }
 
-var controller = new Controller(2);
+var controller = new Controller(1);
 
 var step = function(){
     if(controller.pause == false){
@@ -103,11 +117,13 @@ var startGame = function(){
 
 var PauseGame = function(){
     controller.pause = true;
+    console.log("pause game")
 }
 
 var ContinueGame = function(){
     controller.pause = false;
     animate(step);
+    console.log("continue game")
 }
 
 export {startGame, controller,PauseGame, ContinueGame}
