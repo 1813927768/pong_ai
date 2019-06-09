@@ -1,10 +1,10 @@
 <template>
     <div class="container">
-            <Divider>Game Setting</Divider>
+            <Divider style="margin-top: 30px">Game Setting</Divider>
 
             <div class="card-container">
                 游戏开关：
-                <i-switch v-model="isOpen" size="large" @on-change="changeGameState">
+                <i-switch v-model="controller.pause" size="large" @on-change="changeGameState">
                     <span slot="open">开启</span>
                     <span slot="close">关闭</span>
                 </i-switch>
@@ -15,13 +15,13 @@
                 <div class="control-container">
                     <div>
                         <span> player1 :</span>
-                        <Select v-model="player1" class="player-select"  @on-change="changePlayer1">
+                        <Select v-model="controller.player1.play_mode" class="player-select" >
                             <Option v-for="item in modeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </div>
                     <div>
                         <span> player2 :</span>
-                        <Select v-model="player2" class="player-select" @on-change="changePlayer2">
+                        <Select v-model="controller.player2.play_mode" class="player-select">
                             <Option v-for="item in modeList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </div>
@@ -34,7 +34,7 @@
                 </div>
             </Card>
             
-            <Divider>Model Setting</Divider>
+            <Divider style="margin-top: 50px">Model Setting</Divider>
 
             <Card>
                 <div class="card-container control-container">
@@ -52,12 +52,26 @@
                 <div class="card-container control-container">
                     <div>
                         学习设置：
-                        <Select v-model="playerLearn" class="player-select"  @on-change="changePlayerLearn">
+                        <Select v-model="playerLearn" class="player-select"  @on-change="changeLearnObject">
                             <Option v-for="item in learnList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </div>
 
-                    <Checkbox v-model="useDatabase" size="large" @on-change="useDB">使用数据库</Checkbox>
+                    <Button shape="circle" @click="clearStorage">清除缓存数据</Button>
+                </div>
+
+                <div class="card-container control-container">
+                    <Checkbox v-model="useDatabase" size="large" @on-change="useDB">使用数据库增加训练数据</Checkbox>
+
+                    <Checkbox v-model="controller.ai.learning" size="large">准备训练中</Checkbox>
+                </div>
+
+                <div class="card-container control-container">
+                    <div>
+                        <span>击中率(AI击中次数/AI比赛局数)：</span>
+                        {{controller.ai.hit / controller.ai.current_turn}}
+                    </div>
+                    
                 </div>
 
             </Card>
@@ -99,10 +113,10 @@ export default {
                     label: '两个player都学'
                 }
             ],
-            player1: 2,
-            player2: 2,
+            // player1: 2,
+            // player2: 2,
             playerLearn: 1,
-            isOpen: !controller.pause,
+            // isOpen: !controller.pause,
             useDatabase: true,
             speed: 1,
             trainingTurns: 5,
@@ -115,17 +129,21 @@ export default {
         // }
     },
     methods:{
-        changePlayer1(e){
-            controller.changePlayerMode(1,e);
-        },
-        changePlayer2(e){
-            controller.changePlayerMode(2,e);
+        // changePlayer1(e){
+        //     controller.changePlayerMode(1,e);
+        // },
+        // changePlayer2(e){
+        //     controller.changePlayerMode(2,e);
+        // },
+        clearStorage(){
+            controller.clearStorage();
+            this.$Message.info('clear success');
         },
         changeSpeed(e){
             controller.changeGameSpeed(e)
         },
         changeGameState(){
-            if(this.isOpen){
+            if(controller.pause){
                 ContinueGame();
             }
             else{
@@ -133,7 +151,10 @@ export default {
             }
         },
         changePlayerLearn(e){
-            controller.changeGamesLearn(e)
+            controller.changeGamesLearn(e);
+        },
+        changeLearnObject(e){
+            controller.changeLearnObject(e);
         },
         useDB(){
             console.log(this.useDatabase)

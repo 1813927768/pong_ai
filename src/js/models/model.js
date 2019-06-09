@@ -13,27 +13,13 @@
 var tf = require('@tensorflow/tfjs');
 import {controller,PauseGame,ContinueGame} from "../gameController"
 import {openDB, saveData, readData} from "../util/indexDB"
-import { resolve } from "url";
 
 const width = 400;
 const height = 600;
 
-// sequential linear model
-var model = tf.sequential();
-const learningRate = 0.001;
-const optimizer = tf.train.adam(learningRate);
-
-// input 1x8
-model.add(tf.layers.dense({units: 256, inputShape: [8]}));
-model.add(tf.layers.dense({units: 512, inputShape: [256]}));
-model.add(tf.layers.dense({units: 256, inputShape: [512]}));
-model.add(tf.layers.dense({units: 3, inputShape: [256]}));
-// output 1x3
-
-model.compile({loss: 'meanSquaredError', optimizer: optimizer});
 
 
-export default function Sequential_AI(){
+export default function Sequential_AI(learningRate = 0.01){
     this.previous_player_data = null;
     this.previous_computer_data = null;
     this.training_data = [[],[],[]];
@@ -43,9 +29,29 @@ export default function Sequential_AI(){
     this.grab_data = true;
     this.learn_control = 1;  // 1: learn from player 2: learn from computer 3: learn from both
     this.learning = true;
-    this.ai_host = 1; // 1: player1     2: player2
+    this.ai_host = 2; // 1: player1     2: player2
     this.useDB = true; // use indexdb to add training data
+    this.hit = 0;
+
+    this.preset_model(learningRate);
 }
+
+Sequential_AI.prototype.preset_model = function(learningRate){
+    // sequential linear model
+    this.learning_rate = learningRate;
+    this.model = tf.sequential();
+    this.optimizer = tf.train.adam(this.learningRate);
+
+    // input 1x8
+    this.model.add(tf.layers.dense({units: 256, inputShape: [8]}));
+    this.model.add(tf.layers.dense({units: 512, inputShape: [256]}));
+    this.model.add(tf.layers.dense({units: 256, inputShape: [512]}));
+    this.model.add(tf.layers.dense({units: 3, inputShape: [256]}));
+    // output 1x3
+
+    this.model.compile({loss: 'meanSquaredError', optimizer: this.optimizer});
+}
+
 
 Sequential_AI.prototype.save_data = function(player,computer,ball){
     if(!this.grab_data)
@@ -69,15 +75,18 @@ Sequential_AI.prototype.save_data = function(player,computer,ball){
         0 : ((computer.x == this.previous_computer_data[1])?1:2);        
 
     var player_data_to_train, computer_data_to_train;
-    if(this.learn_control !== 2){
-        player_data_to_train = [...this.previous_player_data, ...player_data_xs];
+    player_data_to_train = [...this.previous_player_data, ...player_data_xs];
+    computer_data_to_train = [...this.previous_computer_data, ...computer_data_xs];
+    
+    // 选择不同的学习对象
+    if(this.learn_control !== 2){  
         this.training_data[player_index].push(player_data_to_train);
     }
-    else if(this.learn_control !== 1){
-        computer_data_to_train = [...this.previous_computer_data, ...computer_data_xs];
+    else if(this.learn_control !== 1){      
         this.training_data[computer_index].push(computer_data_to_train);
     }
 
+    // 根据ai宿主，选择不同的监听数据
     if(this.ai_host == 1){
         this.last_data_object = player_data_to_train;
     }
@@ -98,6 +107,7 @@ Sequential_AI.prototype.new_turn = async function(){
 
     //how many games til train?
     if(this.learning && this.current_turn > this.turn){
+        controller.pause = false;
         PauseGame();
         // train model
         await this.train(); 
@@ -105,6 +115,7 @@ Sequential_AI.prototype.new_turn = async function(){
         await this.reset();
         // start ai
         controller.startAI();
+        controller.pause = true;
         ContinueGame();
         this.learning = false;
     }
@@ -130,6 +141,7 @@ Sequential_AI.prototype.reset = async function(){
     this.previous_player_data = null;
     this.training_data = [[], [], []];
     this.current_turn = 1;
+    this.hit = 0;
 }
 
 
@@ -179,9 +191,10 @@ Sequential_AI.prototype.train = async function(){
         var xs = tf.tensor(data_xs);
         var ys = tf.tensor(data_ys);
 
+        var that = this;
         (async function() {
             console.log('training2');
-            let result = await model.fit(xs, ys);
+            let result = await that.model.fit(xs, ys);
             console.log(result);
         }());
         console.log('trained');
@@ -193,7 +206,7 @@ Sequential_AI.prototype.predict_move = function(){
         //use this.last_data_object for input data
         //do prediction here
         //return -1/0/1
-        var prediction = model.predict(tf.tensor([this.last_data_object]));
+        var prediction = this.model.predict(tf.tensor([this.last_data_object]));
         return tf.argMax(prediction, 1).dataSync()-1;
     }
 }

@@ -65,7 +65,7 @@ Ball.prototype.update = function(paddle1,paddle2) {
             && top_x < (paddle1.x + paddle1.width)
             && bottom_x > paddle1.x){
                 this.y_speed = -3*this.speed;
-                this.x_speed += (paddle1.x_speed / 2);
+                this.x_speed += (paddle1.x_speed / getRandomNum(2,3))
                 this.y += this.y_speed;
             }
         }
@@ -76,8 +76,9 @@ Ball.prototype.update = function(paddle1,paddle2) {
         && top_x < (paddle2.x + paddle2.width)
         && bottom_x > paddle2.x){
             this.y_speed = 3*this.speed;
-            this.x_speed += (paddle2.x_speed / 2);
+            this.x_speed += (paddle2.x_speed / getRandomNum(2,3));
             this.y += this.y_speed;
+            controller.addAIHit();
         }
     }
 }

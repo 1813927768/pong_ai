@@ -28,8 +28,7 @@ function Controller(game_speed){
     this.ball = new Ball(game_speed);
 
     //add control setting
-
-    this.pause = false
+    this.pause = false;
 
     // keep track of which key is pressed
     window.keysDown = {};
@@ -75,9 +74,16 @@ Controller.prototype.changeUseDB = function(e){
     this.ai.useDB = e;
 }
 
+Controller.prototype.clearStorage = function(){
+    this.ai.previous_computer_data = null;
+    this.ai.previous_player_data = null;
+    this.ai.training_data = [[], [], []];
+}
+
 
 // training finish, ai start playing
 Controller.prototype.startAI = function(){
+    console.log("start ai")
     this.player2.play_mode = 3;
     this.player1.play_mode = 2;
 }
@@ -100,10 +106,21 @@ Controller.prototype.changeGameSpeed = function(speed){
     this.ball.changeSpeed(speed);
 }
 
+Controller.prototype.changeLearnObject = function(e){
+    this.ai.learn_control = e;
+    console.log("learn object change");
+}
+
+Controller.prototype.addAIHit = function(){
+    if(this.player2.play_mode == 3){
+        this.ai.hit += 1;
+    }
+}
+
 var controller = new Controller(1);
 
 var step = function(){
-    if(controller.pause == false){
+    if(controller.pause == true){
         controller.update();   
         controller.render();
         animate(step);
@@ -116,12 +133,12 @@ var startGame = function(){
 }
 
 var PauseGame = function(){
-    controller.pause = true;
+    // controller.pause = true;
     console.log("pause game")
 }
 
 var ContinueGame = function(){
-    controller.pause = false;
+    // controller.pause = false;
     animate(step);
     console.log("continue game")
 }
