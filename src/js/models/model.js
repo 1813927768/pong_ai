@@ -38,7 +38,7 @@ export default function Sequential_AI(){
 
 Sequential_AI.prototype.preset_model = function(){
     // sequential linear model
-    this.learning_rate = 0.001;
+    this.learning_rate = 0.005;
     this.model = tf.sequential();
     this.optimizer = tf.train.adam(this.learningRate);
 
@@ -55,11 +55,11 @@ Sequential_AI.prototype.preset_model = function(){
 
     // hidden layer
     this.model.add(tf.layers.dropout(0.5));
-    this.model.add(tf.layers.dense({units: 64, inputShape: [64]}));
+    this.model.add(tf.layers.dense({units: 64, inputShape: [64], activation: 'relu'}));
     this.model.add(tf.layers.dropout(0.5));
-    this.model.add(tf.layers.dense({units: 64, inputShape: [64]}));
+    this.model.add(tf.layers.dense({units: 64, inputShape: [64], activation: 'relu'}));
     this.model.add(tf.layers.dropout(0.5));
-    this.model.add(tf.layers.dense({units: 3, inputShape: [64], activation: 'softmax'}));
+    this.model.add(tf.layers.dense({units: 3, inputShape: [64]}));
     // output 1x3
 
     this.model.compile({loss: 'meanSquaredError', optimizer: this.optimizer});
@@ -116,6 +116,8 @@ Sequential_AI.prototype.save_data = function(player,computer,ball,obstacle){
     
     this.previous_player_data = player_data_xs;
     this.previous_computer_data = computer_data_xs;
+
+    // console.log(this.last_data_object)
 }
 
 // deciding whether to play as ai
@@ -230,7 +232,7 @@ Sequential_AI.prototype.train = async function(){
         (async function() {
             console.log('training2');
             let result = await that.model.fit(xs, ys, {
-                batchSize: 256,
+                batchSize: 64,
                 epochs: 1,
                 shuffle: true,
                 validationSplit: 0.1,
