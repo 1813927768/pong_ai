@@ -2,12 +2,21 @@
     <div class="container">
             <Divider style="margin-top: 30px">Game Setting</Divider>
 
-            <div class="card-container">
-                游戏开关：
-                <i-switch v-model="controller.pause" size="large" @on-change="changeGameState">
-                    <span slot="open">开启</span>
-                    <span slot="close">关闭</span>
-                </i-switch>
+            <div class="card-container control-container">
+                <div>
+                    游戏开关：
+                    <i-switch v-model="controller.pause" size="large" @on-change="changeGameState">
+                        <span slot="open">开启</span>
+                        <span slot="close">关闭</span>
+                    </i-switch>
+                </div>
+                <div>
+                    难度：
+                    <RadioGroup v-model="level" type="button" @on-change="changeLevel"> 
+                        <Radio label="1"></Radio>
+                        <Radio label="2"></Radio>
+                    </RadioGroup>
+                </div>
             </div>
 
             <Card class="card-container">
@@ -115,6 +124,7 @@ export default {
             ],
             // player1: 2,
             // player2: 2,
+            level: '1',
             playerLearn: 1,
             // isOpen: !controller.pause,
             useDatabase: true,
@@ -159,6 +169,10 @@ export default {
         useDB(){
             console.log(this.useDatabase)
             controller.changeUseDB(this.useDatabase)
+        },
+        changeLevel(e){
+            console.log(e);
+            controller.changeLevel(e);
         }
     }
 }

@@ -19,7 +19,7 @@ const height = 600;
 
 
 
-export default function Sequential_AI(learningRate = 0.01){
+export default function Sequential_AI(){
     this.previous_player_data = null;
     this.previous_computer_data = null;
     this.training_data = [[],[],[]];
@@ -33,27 +33,40 @@ export default function Sequential_AI(learningRate = 0.01){
     this.useDB = true; // use indexdb to add training data
     this.hit = 0;
 
-    this.preset_model(learningRate);
+    this.preset_model();
 }
 
-Sequential_AI.prototype.preset_model = function(learningRate){
+Sequential_AI.prototype.preset_model = function(){
     // sequential linear model
-    this.learning_rate = learningRate;
+    this.learning_rate = 0.001;
     this.model = tf.sequential();
     this.optimizer = tf.train.adam(this.learningRate);
 
-    // input 1x8
-    this.model.add(tf.layers.dense({units: 256, inputShape: [8]}));
-    this.model.add(tf.layers.dense({units: 512, inputShape: [256]}));
-    this.model.add(tf.layers.dense({units: 256, inputShape: [512]}));
-    this.model.add(tf.layers.dense({units: 3, inputShape: [256]}));
+    //lv1 input 1x8 
+    if(controller && controller.level == '2'){
+        this.model.add(tf.layers.dense({units: 64, inputShape: [10]}));
+    }
+    //lv2 input 1x10
+    else{
+        this.model.add(tf.layers.dense({units: 64, inputShape: [8]}));
+    }
+    console.log("preset model")
+    
+
+    // hidden layer
+    this.model.add(tf.layers.dropout(0.5));
+    this.model.add(tf.layers.dense({units: 64, inputShape: [64]}));
+    this.model.add(tf.layers.dropout(0.5));
+    this.model.add(tf.layers.dense({units: 64, inputShape: [64]}));
+    this.model.add(tf.layers.dropout(0.5));
+    this.model.add(tf.layers.dense({units: 3, inputShape: [64], activation: 'softmax'}));
     // output 1x3
 
     this.model.compile({loss: 'meanSquaredError', optimizer: this.optimizer});
 }
 
 
-Sequential_AI.prototype.save_data = function(player,computer,ball){
+Sequential_AI.prototype.save_data = function(player,computer,ball,obstacle){
     if(!this.grab_data)
         return
 
@@ -77,6 +90,13 @@ Sequential_AI.prototype.save_data = function(player,computer,ball){
     var player_data_to_train, computer_data_to_train;
     player_data_to_train = [...this.previous_player_data, ...player_data_xs];
     computer_data_to_train = [...this.previous_computer_data, ...computer_data_xs];
+
+    if(controller.level == '2' && obstacle){
+        player_data_to_train.push(obstacle.x);
+        player_data_to_train.push(obstacle.x_speed);
+        computer_data_to_train.push(obstacle.x);
+        computer_data_to_train.push(obstacle.x_speed);
+    }
     
     // 选择不同的学习对象
     if(this.learn_control !== 2){  
@@ -124,12 +144,19 @@ Sequential_AI.prototype.new_turn = async function(){
 // empty training data to start clean
 Sequential_AI.prototype.reset = async function(){
     // store previous data to indexedb
-    openDB("hisData");
+    var db_name;
+    if(controller.level == "1"){
+        db_name  = "level_1"; 
+    }
+    else{
+        db_name = "level_2"
+    }
+    openDB(db_name);
     for(var i = 0; i < 3; i++){
         for(var item of this.training_data[i]){
             await new Promise(
                 (resolve,reject) => {
-                    saveData({'label': i, 'raw': item},'hisData',resolve);
+                    saveData({'label': i, 'raw': item},db_name,resolve);
                 }            
             )
         }
@@ -150,12 +177,20 @@ Sequential_AI.prototype.train = async function(){
 
         var train_data = [[],[],[]]
         if(this.useDB){
-            openDB("hisData");
+            var db_name;
+            if(controller.level == "1"){
+                db_name  = "level_1"; 
+            }
+            else{
+                db_name = "level_2"
+            }
+
+            openDB(db_name);
             console.log('add db data');
             for(let i = 0; i < 3; i++){
                 await new Promise(
                     (resolve,reject) => {
-                        readData(i,'hisData',
+                        readData(i,db_name,
                         (resData) => {                   
                             train_data[i].push(...resData);  
                             resolve();                  
@@ -183,7 +218,7 @@ Sequential_AI.prototype.train = async function(){
         var data_xs = [];
         var data_ys = [];
         for(let i = 0; i < 3; i++){
-            data_xs.push(...train_data[i].slice(0, len));
+            data_xs.push(...train_data[i].slice(0, len).sort(()=>Math.random()-0.5).sort(()=>Math.random()-0.5));
             data_ys.push(...Array(len).fill([i==0?1:0, i==1?1:0, i==2?1:0]));
         }
 
@@ -194,8 +229,25 @@ Sequential_AI.prototype.train = async function(){
         var that = this;
         (async function() {
             console.log('training2');
-            let result = await that.model.fit(xs, ys);
-            console.log(result);
+            let result = await that.model.fit(xs, ys, {
+                batchSize: 256,
+                epochs: 1,
+                shuffle: true,
+                validationSplit: 0.1,
+                callbacks: {
+                    // print batch stats
+                    onBatchEnd: async (batch, logs) => {
+                        console.log("Step "+batch+", loss: "+logs.loss.toFixed(5));
+                    },
+                },});
+
+             // and save it in a local storage (for later use)
+            await that.model.save('indexeddb://my-model');
+
+            // print model and validation stats
+            console.log("Model: loss: "+result.history.loss[0].toFixed(5));
+            console.log("Validation: loss: "+result.history.val_loss[0].toFixed(5));
+        
         }());
         console.log('trained');
 

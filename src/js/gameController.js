@@ -2,6 +2,7 @@
 import Sequential_AI from "./models/model"
 import {Player1,Player2} from "./game/player"
 import Ball from "./game/ball"
+import Obstacle from "./game/obstacle"
 
 //  tells the browser that you wish to perform an animation and requests 
 //  that the browser call a specified function to update an animation 
@@ -21,14 +22,16 @@ function Controller(game_speed){
     this.height = canvas.height = 600;
     this.context = canvas.getContext('2d');  
 
+    //add control setting
+    this.pause = false;
+    this.level = '1';
+
     // add game items
     this.ai = new Sequential_AI();
     this.player1 = new Player1(game_speed);
     this.player2 = new Player2(this.ai,game_speed);
     this.ball = new Ball(game_speed);
-
-    //add control setting
-    this.pause = false;
+    this.obstacle = new Obstacle(200,275);
 
     // keep track of which key is pressed
     window.keysDown = {};
@@ -47,15 +50,26 @@ Controller.prototype.render = function(){
     this.player1.render(this.context);
     this.player2.render(this.context);
     this.ball.render(this.context);
+    if(this.level == '2'){
+        this.obstacle.render(this.context);
+    }
 }
 
 // update all objects
 Controller.prototype.update = function(){
     this.player1.update(this.ball);
     this.player2.update(this.ball);
-    this.ball.update(this.player1.paddle,this.player2.paddle);
-    this.ai.save_data(this.player1.paddle, this.player2.paddle, this.ball);
+    this.ball.update(this.player1.paddle,this.player2.paddle,this.level == "2" ?this.obstacle:null);
+    this.ai.save_data(this.player1.paddle, this.player2.paddle, this.ball,this.level == "2" ?this.obstacle:null);
+    if(this.level == '2'){
+        this.obstacle.move();
+    }
 };
+
+Controller.prototype.changeLevel = function(e){
+    this.level = e;
+    this.ai.preset_model();
+}
 
 Controller.prototype.reset =  function(){
     this.ai.new_turn();

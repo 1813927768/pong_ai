@@ -6,7 +6,7 @@ import {getRandomNum} from "../util/random"
 
 export default function Ball(game_speed){
     this.x = getRandomNum(5,width-5);
-    this.y = getRandomNum(50,height-50);
+    this.y = getRandomNum(100,height-100);
     this.speed = game_speed;
 
     this.x_speed = 0;
@@ -27,7 +27,7 @@ Ball.prototype.changeSpeed = function(speed){
 
 
 
-Ball.prototype.update = function(paddle1,paddle2) {
+Ball.prototype.update = function(paddle1,paddle2,obstacle) {
     this.x += this.x_speed;
     this.y += this.y_speed;
 
@@ -79,6 +79,18 @@ Ball.prototype.update = function(paddle1,paddle2) {
             this.x_speed += (paddle2.x_speed / getRandomNum(2,3));
             this.y += this.y_speed;
             controller.addAIHit();
+        }
+    }
+
+    if(obstacle){
+        // hit obstacle
+        if(top_y < (obstacle.y + obstacle.height) 
+        && bottom_y > obstacle.y 
+        && top_x < (obstacle.x + obstacle.width)
+        && bottom_x > obstacle.x){
+            this.y_speed = -this.y_speed;
+            this.x_speed += (obstacle.x_speed / getRandomNum(2,3));
+            this.y += this.y_speed;
         }
     }
 }

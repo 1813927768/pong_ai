@@ -17,8 +17,8 @@ function openDB(dbName) {
         db = e.target.result;
         console.log('创建数据库' + dbName + '成功');
         // 如果不存在对象仓库则创建
-        if (!db.objectStoreNames.contains('level_1')) {
-            var store = db.createObjectStore('level_1', { autoIncrement: true });
+        if (!db.objectStoreNames.contains('his_data')) {
+            var store = db.createObjectStore('his_data', { autoIncrement: true });
             store.createIndex("label","label", {unique:false});  
         }
         // db.createObjectStore('level_2', { autoIncrement: true });
@@ -34,8 +34,8 @@ async function saveData(data, dbName, callback) {
     var request = indexedDB.open(dbName, 1);
     request.onsuccess = function (e) {
         db = e.target.result;
-        var tx = db.transaction('level_1', 'readwrite');
-        var store = tx.objectStore('level_1');
+        var tx = db.transaction('his_data', 'readwrite');
+        var store = tx.objectStore('his_data');
         var req = store.put(data);
         req.onsuccess = function () {
             // console.log('成功保存数据');
@@ -58,8 +58,8 @@ async function readData(item, dbName, callback) {
     request.onsuccess = function (e) {
         console.log('读取：打开数据库' + dbName + '成功');
         db = e.target.result;
-        var tx = db.transaction('level_1', 'readonly');
-        var store = tx.objectStore('level_1');
+        var tx = db.transaction('his_data', 'readonly');
+        var store = tx.objectStore('his_data');
         var index = store.index("label");
         // debugger
         var result = []
