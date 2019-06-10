@@ -12,18 +12,18 @@ You can change the game setting and model setting accordingly.
 
 Here are some explanation for the setting.
 1. Game Setting
-    - Switch: pause or continue the game
-    - Difficulty: this game has two levels to choose from. And the second level has an additional moving obstacle in the middle of the canvas.
-    - Player Selected: player1 is the player below and vice versa. Each player can be controlled by user, rule based ai(just move to follow the ball around), and the netural network ai.
-    - game speed: can be adjusted between 1 and 10, low speed is prefered for trained ai to have enough time to adjust
+    - ***Switch***: pause or continue the game
+    - ***Difficulty***: this game has two levels to choose from. And the second level has an additional moving obstacle in the middle of the canvas.
+    - ***Player Selected***: player1 is the player below and vice versa. Each player can be controlled by user, rule based ai(just move to follow the ball around), and the netural network ai.
+    - ***game speed***: can be adjusted between 1 and 10, low speed is prefered for ai to have enough time to adjust
 2. Model Setting
-    - turns planned to train: how many games you planned to collect data to trian your ai
-    - current turn: how many games you have played(will be reset after ai have been trained)
-    - learn setting: determine which player yooy choose to learn from (actually is which player your train data is from)
-    - clear system cache: click to clear all the train data has been collected since last train (note: not the data of in the indexDB just data cached in the memory)
-    - use indexDB: For the data to train ai, it's always the more the better. You can use the data in the indexDB to add train data.(And the data will be automatically stored in the DB every time before the train, so you don't have to worry about the data source)
-    - preparing to trian: If you don't plan to train your ai, you can uncheck this option.
-    - Hit Rate: an assessment criteria for your ai
+    - ***turns planned to train***: how many games you planned to collect data to trian your ai
+    - ***current turn***: how many games you have played(will be reset after ai have been trained)
+    - ***learn setting***: determine which player you choose to learn from (actually is which player your train data is from)
+    - ***clear system cache***: click to clear all the train data has been collected since last train (note: not the data of in the indexDB just data cached in the memory)
+    - ***use indexDB***: For the data to train ai, it's always the more the better. You can use the data in the indexDB to add train data.(And the data will be automatically stored in the DB every time before the train, so you don't have to worry about the data source)
+    - ***preparing to trian***: If you don't plan to train your ai, you can uncheck this option.
+    - ***Hit Rate***: an assessment criteria for your ai
 
 > open the console for more details
 
@@ -37,7 +37,27 @@ And according to my test, when the data volume accumulates to about 20000+, curr
 
 ### ref
 
-The project is based on the [tutorial](https://pythonprogramming.net/pong-ai-tensorflowjs-tutorial/) provided by pythonprogramming.net.
+1. The project is based on the [tutorial](https://pythonprogramming.net/pong-ai-tensorflowjs-tutorial/) provided by pythonprogramming.net.
+
+2. [tensorflow.js tutorial](https://www.tensorflow.org/js/tutorials)
+
+3. [Hello World with Tensorflow.js](https://thekevinscott.com/tensorflowjs-hello-world/)
+
+4. [indexDB api](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Using_IndexedDB)
+
+5. [indexDB tutorial 阮一峰](http://www.ruanyifeng.com/blog/2018/07/indexeddb.html)
+
+6. [Another indexDB tutorial](http://www.tfan.org/using-indexeddb/#i-10)
+
+7. [IView api](https://www.iviewui.com/)
+
+8. [浅析js中的Promise和async/await](https://blog.csdn.net/yes1983/article/details/83629647)
+
+9. [JS中的异步操作](https://www.jianshu.com/p/6f91e7696b91)
+
+10. [import, export in es6](https://www.cnblogs.com/diligenceday/p/5503777.html)
+
+
 
 ## Project setup
 ```
