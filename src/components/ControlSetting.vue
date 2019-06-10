@@ -4,14 +4,14 @@
 
             <div class="card-container control-container">
                 <div>
-                    游戏开关：
+                    Switch：
                     <i-switch v-model="controller.pause" size="large" @on-change="changeGameState">
-                        <span slot="open">开启</span>
-                        <span slot="close">关闭</span>
+                        <span slot="open">On</span>
+                        <span slot="close">Off</span>
                     </i-switch>
                 </div>
                 <div>
-                    难度：
+                    Difficulty：
                     <RadioGroup v-model="level" type="button" @on-change="changeLevel"> 
                         <Radio label="1"></Radio>
                         <Radio label="2"></Radio>
@@ -48,11 +48,11 @@
             <Card>
                 <div class="card-container control-container">
                     <div>
-                        计划训练局数：
+                        turns planned to train：
                         <InputNumber :max="10000" :min="1" v-model="trainingTurns" size="small" @on-change="changePlayerLearn"></InputNumber>
                     </div>
                     <div>
-                        当前局数：
+                        current turn：
                         {{controller.currentTurn()}}
                     </div>
                     
@@ -60,24 +60,24 @@
 
                 <div class="card-container control-container">
                     <div>
-                        学习设置：
+                        Learn Setting：
                         <Select v-model="playerLearn" class="player-select"  @on-change="changeLearnObject">
                             <Option v-for="item in learnList" :value="item.value" :key="item.value">{{ item.label }}</Option>
                         </Select>
                     </div>
 
-                    <Button shape="circle" @click="clearStorage">清除缓存数据</Button>
+                    <Button shape="circle" @click="clearStorage">clear system cache</Button>
                 </div>
 
                 <div class="card-container control-container">
-                    <Checkbox v-model="useDatabase" size="large" @on-change="useDB">使用数据库增加训练数据</Checkbox>
+                    <Checkbox v-model="useDatabase" size="large" @on-change="useDB">use indexDB to add data</Checkbox>
 
-                    <Checkbox v-model="controller.ai.learning" size="large">准备训练中</Checkbox>
+                    <Checkbox v-model="controller.ai.learning" size="large">preparing to train</Checkbox>
                 </div>
 
                 <div class="card-container control-container">
                     <div>
-                        <span>击中率(AI击中次数/AI比赛局数)：</span>
+                        <span>Hit Rate(AI hit/Games Played)：</span>
                         {{controller.ai.hit / controller.ai.current_turn}}
                     </div>
                     
@@ -111,15 +111,15 @@ export default {
             learnList : [
                 {
                     value: 1,
-                    label: '只学player1'
+                    label: 'only player1'
                 },
                 {
                     value: 2,
-                    label: '只学player2'
+                    label: 'only player2'
                 },
                 {
                     value: 3,
-                    label: '两个player都学'
+                    label: 'both players'
                 }
             ],
             // player1: 2,

@@ -38,7 +38,7 @@ async function saveData(data, dbName, callback) {
         var store = tx.objectStore('his_data');
         var req = store.put(data);
         req.onsuccess = function () {
-            // console.log('成功保存数据');
+            console.log('成功保存数据');
             callback && callback();
         }
         // req.onerror = function(){

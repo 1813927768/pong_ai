@@ -244,7 +244,7 @@ Sequential_AI.prototype.train = async function(){
                 },});
 
              // and save it in a local storage (for later use)
-            await that.model.save('indexeddb://my-model');
+            // await that.model.save('indexeddb://my-model');
 
             // print model and validation stats
             console.log("Model: loss: "+result.history.loss[0].toFixed(5));

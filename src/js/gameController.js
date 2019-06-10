@@ -69,6 +69,7 @@ Controller.prototype.update = function(){
 Controller.prototype.changeLevel = function(e){
     this.level = e;
     this.ai.preset_model();
+    this.clearStorage();
 }
 
 Controller.prototype.reset =  function(){
