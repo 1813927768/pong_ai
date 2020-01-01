@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 // input features:
 // 
 // 1. Player paddle x
